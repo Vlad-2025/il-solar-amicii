@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+.streamlit/secrets.toml
+data/uploads/
+data/app.db
+*.joblib
+node_modules/
+.expo/
+*.apk

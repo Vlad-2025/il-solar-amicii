@@ -1,0 +1,25 @@
+# Baseline before Law 160/2026, as described in the challenge brief
+# ("quantity compensation limit raised from 200 kW to 400 kW").
+# The effective date and the carry-over details are NOT verified; do not rely on this file
+# for checks of bills issued before 26 July 2026 until someone checks the law text.
+id: ro-compensare-v1-baseline
+version: 1
+title: Compensare cantitativă până la 200 kW (înainte de Legea 160/2026)
+effective_from: 2024-01-01
+verified: false
+applies_to:
+  customer_types: [individual, company, public_institution]
+  max_kw: 200
+params:
+  compensation_type: quantity
+  netting_period: month
+  quantity_compensation_max_kw: 200
+  quantity_compensation_until: 2030-12-31
+  financial_settlement: null
+  carryover_months: null                 # UNVERIFIED: how long surplus kWh stay valid
+  network_tariffs_on_compensated: null   # UNVERIFIED: whether network tariffs apply to compensated kWh
+source: Challenge brief, AI Validation Bootcamp, Challenge 1 (state before Law 160/2026)
+source_url: null
+summary_ro: >
+  Prosumatorii cu instalații de până la 200 kW pot compensa cantitativ energia livrată
+  în rețea cu energia consumată (kWh pentru kWh), calculat lunar.

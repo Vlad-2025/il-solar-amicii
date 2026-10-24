@@ -1,0 +1,13 @@
+[theme]
+primaryColor = "#1d4e89"
+base = "light"
+
+[server]
+maxUploadSize = 25
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"

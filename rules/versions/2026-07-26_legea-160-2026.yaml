@@ -1,0 +1,29 @@
+# Law 160/2026, in force since 26 July 2026 (from the challenge brief).
+# ANRE still has to update its methodology: carry-over and tariff details are open questions.
+id: ro-compensare-v2-legea-160-2026
+version: 2
+title: Legea 160/2026 – compensare cantitativă până la 400 kW
+effective_from: 2026-07-26
+verified: false
+applies_to:
+  customer_types: [individual, company, public_institution]
+  max_kw: 400
+params:
+  compensation_type: quantity
+  netting_period: month
+  quantity_compensation_max_kw: 400
+  quantity_compensation_until: 2030-12-31
+  financial_settlement:
+    customer_types: [company, public_institution]
+    min_kw: 200
+    max_kw: 400
+    price_basis: prețul mediu ponderat al pieței pentru ziua următoare (PZU)
+  carryover_months: null                 # UNVERIFIED: how long surplus kWh stay valid
+  network_tariffs_on_compensated: null   # UNVERIFIED: whether network tariffs apply to compensated kWh
+source: Challenge brief, AI Validation Bootcamp, Challenge 1 (Law 160/2026)
+source_url: null                         # TODO: link the law text in Monitorul Oficial
+summary_ro: >
+  Limita pentru compensarea cantitativă crește de la 200 kW la 400 kW și se calculează lunar.
+  Compensarea cantitativă rămâne disponibilă până la 31 decembrie 2030. Companiile și instituțiile
+  publice cu instalații între 200 și 400 kW pot cere în schimb regularizare financiară la prețul
+  mediu ponderat PZU. ANRE trebuie încă să își actualizeze metodologia.

@@ -1,0 +1,27 @@
+# DEMO ONLY. Not a real rule. Used on stage to show the "rule changed -> phone buzzes" flow.
+# Publish it from Reguli & alerte (admin) or copy it into rules/versions/ on a demo branch.
+id: ro-compensare-v3-DEMO
+version: 3
+title: "[DEMO] Exemplu de schimbare: surplusul expiră după 12 luni"
+effective_from: 2026-11-01
+verified: false
+demo: true
+applies_to:
+  customer_types: [individual, company, public_institution]
+  max_kw: 400
+params:
+  compensation_type: quantity
+  netting_period: month
+  quantity_compensation_max_kw: 400
+  quantity_compensation_until: 2030-12-31
+  financial_settlement:
+    customer_types: [company, public_institution]
+    min_kw: 200
+    max_kw: 400
+    price_basis: prețul mediu ponderat al pieței pentru ziua următoare (PZU)
+  carryover_months: 12
+  network_tariffs_on_compensated: null
+source: DEMO – exemplu inventat pentru prezentare, nu o regulă reală
+source_url: null
+summary_ro: >
+  EXEMPLU DEMO, NU ESTE O REGULĂ REALĂ. Surplusul de energie necompensat ar expira după 12 luni.

@@ -1,0 +1,27 @@
+name: Daily forecasts
+
+on:
+  schedule:
+    - cron: "17 3 * * *"        # 03:17 UTC every day (06:17 in Romania, summer time)
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Refresh forecasts (retrain models older than 7 days on Mondays)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ "$(date -u +%u)" = "1" ]; then
+            python -m jobs.refresh_forecasts --retrain-older-than 7
+          else
+            python -m jobs.refresh_forecasts
+          fi

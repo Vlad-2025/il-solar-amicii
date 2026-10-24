@@ -1,0 +1,25 @@
+name: Rule change alerts
+
+on:
+  push:
+    branches: [main]
+    paths: ["rules/versions/**"]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Publish new rule versions and push personalised notes
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NTFY_BASE_URL: ${{ vars.NTFY_BASE_URL || 'https://ntfy.sh' }}
+          APP_URL: ${{ vars.APP_URL }}
+        run: python -m jobs.rule_alerts

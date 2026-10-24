@@ -1,0 +1,38 @@
+# Local mirror of production: Postgres (like Supabase) + the app.
+#   docker compose up -d        then open http://localhost:8501
+# Windows teammates can point their local app at this database:
+#   DATABASE_URL=postgresql://prosumer:prosumer@<ubuntu-ip>:5432/prosumer
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: prosumer
+      POSTGRES_PASSWORD: prosumer
+      POSTGRES_DB: prosumer
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prosumer"]
+      interval: 5s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://prosumer:prosumer@db:5432/prosumer
+      APP_URL: http://localhost:8501
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./:/app           # live code reload while developing
+
+volumes:
+  pgdata:
