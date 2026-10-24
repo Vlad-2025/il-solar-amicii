@@ -194,3 +194,33 @@ kv = Table(
     Column("value", Text),
     Column("updated_at", DateTime(timezone=True), server_default=func.now()),
 )
+
+
+# ---------------------------------------------------------------- planner (new tables, so existing databases
+# only need create_all, no column migrations)
+devices = Table(
+    "devices", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("site_id", Integer, ForeignKey("sites.id", ondelete="CASCADE"), nullable=False),
+    Column("name", String(100), nullable=False),
+    Column("kind", String(20), nullable=False),          # schedule | continuous | heating | cooling | ev
+    Column("power_w", Float),
+    Column("hours_per_day", Float),
+    Column("start_hour", Integer),
+    Column("days_per_week", Integer),
+    Column("months_json", JSON),
+    Column("flexible", Boolean, nullable=False, server_default="0"),
+    Column("is_new", Boolean, nullable=False, server_default="1"),   # planned (adds to demand) vs already at home
+    Column("annual_kwh", Float),
+    Column("ev_km_day", Float),
+    Column("ev_kwh_100km", Float),
+    Column("quantity", Integer, nullable=False, server_default="1"),
+    Column("created_at", DateTime(timezone=True), server_default=func.now()),
+)
+
+plan_settings = Table(
+    "plan_settings", metadata,
+    Column("site_id", Integer, ForeignKey("sites.id", ondelete="CASCADE"), primary_key=True),
+    Column("settings_json", JSON),
+    Column("updated_at", DateTime(timezone=True), server_default=func.now()),
+)

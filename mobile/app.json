@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Asistent Prosumator",
+    "slug": "asistent-prosumator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "prosumer",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "ro.prosumator.asistent",
+      "icon": "./assets/images/icon.png"
+    },
+    "android": {
+      "package": "ro.prosumator.asistent",
+      "adaptiveIcon": {
+        "backgroundColor": "#1D4E89",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1D4E89",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 96
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Aplicația folosește camera ca să fotografiați factura de energie.",
+          "photosPermission": "Aplicația citește poza facturii pe care o alegeți din galerie.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Locația casei este folosită pentru prognoza producției panourilor."
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "extra": {
+      "apiUrl": "https://YOUR-SPACE.hf.space"
+    },
+    "experiments": {
+      "typedRoutes": false,
+      "reactCompiler": true
+    }
+  }
+}

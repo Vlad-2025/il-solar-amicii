@@ -37,6 +37,7 @@ pages = {
         st.Page("pages/acasa.py", title="Acasă", icon=":material/home:", url_path="acasa", default=site is not None),
         st.Page("pages/facturi.py", title="Facturi", icon=":material/receipt_long:", url_path="facturi"),
         st.Page("pages/prognoza.py", title="Prognoză", icon=":material/wb_sunny:", url_path="prognoza"),
+        st.Page("pages/plan.py", title="Plan sistem", icon=":material/calculate:", url_path="plan"),
         st.Page("pages/date_invertor.py", title="Date invertor", icon=":material/upload_file:", url_path="date"),
         st.Page("pages/reguli.py", title="Reguli & alerte", icon=":material/gavel:", url_path="reguli"),
     ],

@@ -22,7 +22,8 @@ st.subheader("Producție și consum, pe ore")
 st.altair_chart(common.hourly_chart(hourly), width="stretch")
 legend = "Linia portocalie: producția estimată. Linia albastră punctată: consumul estimat."
 if hourly["pv_p10"].notna().any():
-    legend += " Banda: între percentila 10 și 90 (8 din 10 ore ar trebui să cadă în ea)."
+    legend += (" Banda: percentilele 10–90 ale modelului pentru vremea prognozată; nu include "
+                   "greșelile prognozei meteo, deci în realitate intervalul este mai larg.")
 else:
     legend += " Banda de incertitudine apare după ce antrenați modelul pe datele invertorului."
 st.caption(legend + " " + fc["lead_note"])

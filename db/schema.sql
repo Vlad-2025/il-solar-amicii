@@ -114,6 +114,27 @@ CREATE TABLE IF NOT EXISTS bills (
 	FOREIGN KEY(site_id) REFERENCES sites (id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS devices (
+	id SERIAL NOT NULL, 
+	site_id INTEGER NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	kind VARCHAR(20) NOT NULL, 
+	power_w FLOAT, 
+	hours_per_day FLOAT, 
+	start_hour INTEGER, 
+	days_per_week INTEGER, 
+	months_json JSON, 
+	flexible BOOLEAN DEFAULT '0' NOT NULL, 
+	is_new BOOLEAN DEFAULT '1' NOT NULL, 
+	annual_kwh FLOAT, 
+	ev_km_day FLOAT, 
+	ev_kwh_100km FLOAT, 
+	quantity INTEGER DEFAULT '1' NOT NULL, 
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(site_id) REFERENCES sites (id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS forecasts (
 	site_id INTEGER NOT NULL, 
 	run_at TIMESTAMP WITH TIME ZONE NOT NULL, 
@@ -137,6 +158,14 @@ CREATE TABLE IF NOT EXISTS models (
 	artifact_path VARCHAR(255), 
 	artifact BYTEA, 
 	PRIMARY KEY (id), 
+	FOREIGN KEY(site_id) REFERENCES sites (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS plan_settings (
+	site_id INTEGER NOT NULL, 
+	settings_json JSON, 
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(), 
+	PRIMARY KEY (site_id), 
 	FOREIGN KEY(site_id) REFERENCES sites (id) ON DELETE CASCADE
 );
 

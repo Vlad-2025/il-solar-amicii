@@ -1,4 +1,5 @@
 """Headless smoke test of the Streamlit app: demo login, premium unlock, every page, bill confirm."""
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -6,7 +7,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = str(ROOT / "app" / "Home.py")
-PAGES = ["acasa", "facturi", "prognoza", "date_invertor", "reguli", "abonament", "profil"]
+PAGES = ["acasa", "facturi", "prognoza", "plan", "date_invertor", "reguli", "abonament", "profil"]
 
 
 def _click(at, label):
@@ -25,6 +26,9 @@ def app():
     at = AppTest.from_file(APP, default_timeout=300)
     at.run()
     _no_errors(at, "login page")
+    from db import repo
+    from db.seed import DEMO_EMAIL
+    repo.update_user(repo.get_user_by_email(DEMO_EMAIL)["id"], plan="free")   # other tests may have unlocked it
     _click(at, "Intră în contul demo")
     return at
 
@@ -50,7 +54,9 @@ def test_bill_confirm_and_check(app):
     app.run()
     _click(app, "Confirmă și salvează")
     _no_errors(app, "bill confirm")
-    assert any("-11,5%" in w.value for w in app.warning)
+    # Demo inverter data is regenerated up to yesterday, so the exact gap drifts by a few tenths.
+    flagged = [w.value for w in app.warning if "Energia livrată" in w.value]
+    assert flagged and any(re.search(r"-1[01],\d%", v) for v in flagged), flagged
     assert any(t.value.startswith("Către: Furnizor Demo SA") for t in app.text_area)
 
 

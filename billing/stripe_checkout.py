@@ -29,9 +29,11 @@ def configured() -> bool:
     return key.startswith(("sk_test_", "rk_test_")) and bool(os.environ.get("STRIPE_PRICE_ID"))
 
 
-def create_checkout(email: str, user_id: int, app_url: str, login_token: str) -> str:
+def create_checkout(email: str, user_id: int, app_url: str, login_token: str,
+                    success_url: str | None = None, cancel_url: str | None = None) -> str:
     """Returns the Stripe-hosted checkout URL. login_token lets the return page restore the login,
-    because the redirect back lands in a fresh browser session."""
+    because the redirect back lands in a fresh browser session. The mobile API passes its own
+    success/cancel URLs instead."""
     price = os.environ.get("STRIPE_PRICE_ID")
     if not price:
         raise StripeNotConfigured("STRIPE_PRICE_ID lipsește din secrets.")
@@ -41,8 +43,8 @@ def create_checkout(email: str, user_id: int, app_url: str, login_token: str) ->
         "line_items": [{"price": price, "quantity": 1}],
         "customer_email": email,
         "client_reference_id": str(user_id),
-        "success_url": f"{base}/abonament?session_id={{CHECKOUT_SESSION_ID}}&u={login_token}",
-        "cancel_url": f"{base}/abonament?canceled=1&u={login_token}",
+        "success_url": success_url or f"{base}/abonament?session_id={{CHECKOUT_SESSION_ID}}&u={login_token}",
+        "cancel_url": cancel_url or f"{base}/abonament?canceled=1&u={login_token}",
         "locale": "ro",
     })
     return session.url

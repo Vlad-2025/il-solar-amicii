@@ -50,7 +50,9 @@ st.caption("Pentru precizie maximă, copiați coordonatele casei din Google Maps
 with st.form("site"):
     st.subheader("Panouri și baterie")
     c1, c2, c3 = st.columns(3)
-    kwp = c1.number_input("Putere instalată (kWp)", min_value=0.5, max_value=400.0, value=float(site.get("kwp") or 6.0), step=0.1)
+    kwp = c1.number_input("Putere instalată (kWp)", min_value=0.0, max_value=400.0,
+                          value=float(site["kwp"]) if site.get("kwp") is not None else 6.0, step=0.1,
+                          help="0 dacă nu aveți încă panouri: folosiți pagina Plan ca să aflați câte vă trebuie.")
     tilt = c2.slider("Înclinare panouri (°)", 0, 90, int(site.get("tilt") or 30))
     cur_az = float(site.get("azimuth") or 180.0)
     orient_labels = list(ORIENT) + ["Altă valoare"]
@@ -85,14 +87,14 @@ with st.form("site"):
 if saved:
     azimuth = az_custom if orient == "Altă valoare" else ORIENT[orient]
     fields = {"lat": lat, "lon": lon, "elevation": elev, "kwp": kwp, "tilt": float(tilt), "azimuth": azimuth,
-              "inverter_kw": inverter or None, "battery_kwh": battery, "monthly_kwh": monthly or None,
+              "inverter_kw": (inverter or None) if kwp > 0 else None, "battery_kwh": battery, "monthly_kwh": monthly or None,
               "supplier": supplier if supplier != "Alt furnizor" else None, "customer_type": ctype,
               "compensation_type": comp, "price_lei_kwh": price or None, "carryover_kwh": carry}
     if site.get("label"):
         fields["label"] = site["label"]
     changed_geometry = any(site.get(k) != fields[k] for k in ("lat", "lon", "kwp", "tilt", "azimuth"))
     saved_site = repo.upsert_site(user["id"], fields)
-    if changed_geometry or not site.get("pvgis_annual_kwh"):
+    if kwp > 0 and (changed_geometry or not site.get("pvgis_annual_kwh")):
         try:
             with st.spinner("Cerem estimarea anuală de la PVGIS..."):
                 pv = pvgis.fetch(Site.from_row(saved_site))

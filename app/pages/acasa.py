@@ -28,6 +28,10 @@ else:
     c3.metric("Factura lunii (estimare)", "Premium")
     c4.metric("Credit reportat", "Premium")
 
+if not float(site.get("kwp") or 0):
+    st.info("Nu aveți încă panouri. Aflați câte panouri și baterii vi se potrivesc în pagina Plan sistem.",
+            icon=":material/calculate:")
+    st.page_link("pages/plan.py", label="Plan sistem", icon=":material/calculate:")
 st.subheader("Următoarele 7 zile")
 cols = {"pv": "Producție", "load": "Consum"} if common.is_premium(user) else {"pv": "Producție"}
 st.altair_chart(common.daily_bars(daily, cols), width="stretch")

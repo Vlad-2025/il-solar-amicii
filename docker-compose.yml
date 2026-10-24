@@ -34,5 +34,23 @@ services:
     volumes:
       - ./:/app           # live code reload while developing
 
+  api:                    # mobile API: http://<ubuntu-ip>:8000/docs
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://prosumer:prosumer@db:5432/prosumer
+      API_URL: http://localhost:8000
+      PORT: "8000"
+      SEED_DEMO: "0"      # the web app seeds the demo account; avoid two seeders racing
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "8000:8000"
+
 volumes:
   pgdata:

@@ -26,7 +26,10 @@ def weather_kind(site_row: dict) -> str:
 
 def all_rules() -> list[Rule]:
     """Rules in force for calculations. DEMO rules never take part, even if someone published one."""
-    rows = repo.list_rules()
+    try:
+        rows = repo.list_rules()
+    except Exception:  # noqa: BLE001 - database not initialised yet: the rule files are the source of truth
+        rows = []
     rules = [Rule.from_dict(r) for r in rows] if rows else load_rules()
     return [r for r in rules if not r.demo]
 

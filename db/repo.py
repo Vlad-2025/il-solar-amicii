@@ -448,3 +448,61 @@ def kv_set(key: str, value: str) -> None:
             c.execute(update(m.kv).where(m.kv.c.key == key).values(value=value, updated_at=_dt(now_utc())))
         else:
             c.execute(insert(m.kv).values(key=key, value=value, updated_at=_dt(now_utc())))
+
+
+# ---------------------------------------------------------------- planner: devices and settings
+DEVICE_FIELDS = {"name", "kind", "power_w", "hours_per_day", "start_hour", "days_per_week", "flexible", "is_new",
+                 "annual_kwh", "ev_km_day", "ev_kwh_100km", "quantity"}
+
+
+def _device_out(row) -> dict:
+    d = _row(row)
+    d["months"] = d.pop("months_json") or list(range(1, 13))
+    return d
+
+
+def list_devices(site_id: int) -> list[dict]:
+    with get_engine().connect() as c:
+        return [_device_out(r) for r in c.execute(
+            select(m.devices).where(m.devices.c.site_id == site_id).order_by(m.devices.c.id))]
+
+
+def get_device(device_id: int) -> dict | None:
+    with get_engine().connect() as c:
+        r = c.execute(select(m.devices).where(m.devices.c.id == device_id)).first()
+    return _device_out(r) if r else None
+
+
+def save_device(site_id: int, dev: dict, device_id: int | None = None) -> dict:
+    data = {k: _clean(v) for k, v in dev.items() if k in DEVICE_FIELDS}
+    if "months" in dev:
+        data["months_json"] = [int(x) for x in (dev["months"] or range(1, 13))]
+    with get_engine().begin() as c:
+        if device_id:
+            c.execute(update(m.devices).where(and_(m.devices.c.id == device_id, m.devices.c.site_id == site_id))
+                      .values(**data))
+        else:
+            device_id = c.execute(insert(m.devices).values(site_id=site_id, **data)).inserted_primary_key[0]
+    return get_device(int(device_id))
+
+
+def delete_device(site_id: int, device_id: int) -> None:
+    with get_engine().begin() as c:
+        c.execute(delete(m.devices).where(and_(m.devices.c.id == device_id, m.devices.c.site_id == site_id)))
+
+
+def get_plan_settings(site_id: int) -> dict:
+    with get_engine().connect() as c:
+        v = c.execute(select(m.plan_settings.c.settings_json).where(m.plan_settings.c.site_id == site_id)).scalar()
+    return dict(v or {})
+
+
+def save_plan_settings(site_id: int, settings: dict) -> dict:
+    data = _jsonable(settings)
+    with get_engine().begin() as c:
+        if c.execute(select(m.plan_settings.c.site_id).where(m.plan_settings.c.site_id == site_id)).first():
+            c.execute(update(m.plan_settings).where(m.plan_settings.c.site_id == site_id)
+                      .values(settings_json=data, updated_at=_dt(now_utc())))
+        else:
+            c.execute(insert(m.plan_settings).values(site_id=site_id, settings_json=data, updated_at=_dt(now_utc())))
+    return get_plan_settings(site_id)
